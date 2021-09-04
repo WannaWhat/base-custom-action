@@ -1,0 +1,32 @@
+name: 'Fancy name of the action'
+
+description: 'Short description'
+
+author: 'name I want to become famous with'
+
+inputs:
+
+  github-token:
+
+    description: 'token'
+
+    required: true
+
+  github-lalala:
+
+    description: 'lalala'
+
+    required: true
+
+runs:
+
+  using: 'node12' # необходимая версия ноды – важно
+
+  main: 'lib/index.js' # итоговый файл со всем кодом
+
+branding: # как будет выглядеть иконка экшена в маркетплейсе
+
+  icon: 'terminal'
+
+  color: 'blue'
+
