@@ -7253,9 +7253,6 @@ function get_config() {
     if (fs.existsSync(CONFIG_PATH)) {
         var file = fs.readFileSync(CONFIG_PATH, 'utf8');
         var deployment_config = YAML.parse(file);
-        console.log(deployment_config);
-        console.log(deployment_config['dep_branches']['dev']);
-        console.log(deployment_config['dep_branches']['dev']['env']);
         return deployment_config;
     }
     else {
@@ -7272,10 +7269,8 @@ function main() {
             throw new Error("Current branch: " + BRANCH + " not in config file: " + CONFIG_PATH);
         }
         var BRANCH_FILE = CONFIG_FILE['dep_branches'][BRANCH];
-        // console.log(`BRANCH_FILE ${ BRANCH_FILE['env']['path'] }`)
         if ('env' in BRANCH_FILE) {
             var env_path = BRANCH_FILE['env']['path'];
-            console.log('actual', env_path);
             var file = fs.readFileSync(env_path, 'utf8');
             file += '\n';
             var enviroments = BRANCH_FILE['env']['append'];
@@ -7284,7 +7279,7 @@ function main() {
                     file += key + "=" + process.env[key] + "\n";
                 }
                 else {
-                    file += key + "=" + enviroments[key] + "\n";
+                    file += key + "=" + enviroments[key]['name'] + "\n";
                 }
             }
             fs.writeFileSync(env_path, file);
