@@ -34,6 +34,7 @@ function main(): void {
             let key_name: string = ''
             if (isString(enviroments[key])) {
                 key_name = enviroments[key]
+                console.log('check from env ', key_name, process.env[key_name])
                 file += `${key_name}=${process.env[key_name]}\n`
             } else {
                 for (let index_key in enviroments[key]) {

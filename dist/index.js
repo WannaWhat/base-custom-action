@@ -6731,6 +6731,7 @@ function main() {
                 var key_name = '';
                 if ((0,external_util_namespaceObject.isString)(enviroments[key])) {
                     key_name = enviroments[key];
+                    console.log('check from env ', key_name, process.env[key_name]);
                     file += key_name + "=" + process.env[key_name] + "\n";
                 }
                 else {
