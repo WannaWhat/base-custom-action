@@ -19,12 +19,12 @@ function main(): void {
     try {
     console.log('Start deployment script');
     const CONFIG_FILE: any = get_config();
-    console.log(CONFIG_FILE['dep_branches']['master']['env']['append'])
     if (BRANCH in CONFIG_FILE['dep_branches']) {
     } else {
         throw new Error(`Current branch: ${BRANCH} not in config file: ${CONFIG_PATH}`);
     }
     let BRANCH_FILE: any = CONFIG_FILE['dep_branches'][BRANCH];
+
     if ('env' in BRANCH_FILE){
         let env_path: string = BRANCH_FILE['env']['path']
         let file = fs.readFileSync(env_path, 'utf8')
@@ -32,10 +32,8 @@ function main(): void {
         let enviroments: any = BRANCH_FILE['env']['append'];
         for (let key in enviroments){
             let key_name: string = ''
-            console.log(isString(enviroments[key]), 'isString')
             if (isString(enviroments[key])) {
                 key_name = enviroments[key]
-                console.log('check from env ', key_name, process.env[key_name])
                 file += `${key_name}=${process.env[key_name]}\n`
             } else {
                 for (let index_key in enviroments[key]) {
@@ -47,6 +45,16 @@ function main(): void {
         fs.writeFileSync(env_path, file)
         console.log(file)
     }
+
+    if ('service' in BRANCH_FILE){
+        let service_name: string = BRANCH_FILE['service']['name']
+        let enable: boolean = false
+        if ('enable' in BRANCH_FILE['service']){
+            enable = true
+        }
+
+    }
+
     }
     catch (error) {
         console.error(error.message);

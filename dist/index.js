@@ -6715,7 +6715,6 @@ function main() {
     try {
         console.log('Start deployment script');
         var CONFIG_FILE = get_config();
-        console.log(CONFIG_FILE['dep_branches']['master']['env']['append']);
         if (BRANCH in CONFIG_FILE['dep_branches']) {
         }
         else {
@@ -6729,10 +6728,8 @@ function main() {
             var enviroments = BRANCH_FILE['env']['append'];
             for (var key in enviroments) {
                 var key_name = '';
-                console.log((0,external_util_namespaceObject.isString)(enviroments[key]), 'isString');
                 if ((0,external_util_namespaceObject.isString)(enviroments[key])) {
                     key_name = enviroments[key];
-                    console.log('check from env ', key_name, process.env[key_name]);
                     file += key_name + "=" + process.env[key_name] + "\n";
                 }
                 else {
@@ -6744,6 +6741,13 @@ function main() {
             }
             fs.writeFileSync(env_path, file);
             console.log(file);
+        }
+        if ('service' in BRANCH_FILE) {
+            var service_name = BRANCH_FILE['service']['name'];
+            var enable = false;
+            if ('enable' in BRANCH_FILE['service']) {
+                enable = true;
+            }
         }
     }
     catch (error) {
