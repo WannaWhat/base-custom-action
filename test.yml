@@ -1,0 +1,16 @@
+version: 1
+dep_branches:
+    master:
+        env:
+            path: .env
+            append:
+                - name: naming
+                - BOT_TOKEN
+                - key: name
+
+    dev:
+        env:
+            path: .env
+            append:
+                bot_token: bottokennnm
+                name: name

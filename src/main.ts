@@ -32,6 +32,7 @@ function main(): void {
         let enviroments: any = BRANCH_FILE['env']['append'];
         for (let key in enviroments){
             let key_name: string = ''
+            console.log(isString(enviroments[key]), 'isString')
             if (isString(enviroments[key])) {
                 key_name = enviroments[key]
                 console.log('check from env ', key_name, process.env[key_name])

@@ -6729,6 +6729,7 @@ function main() {
             var enviroments = BRANCH_FILE['env']['append'];
             for (var key in enviroments) {
                 var key_name = '';
+                console.log((0,external_util_namespaceObject.isString)(enviroments[key]), 'isString');
                 if ((0,external_util_namespaceObject.isString)(enviroments[key])) {
                     key_name = enviroments[key];
                     console.log('check from env ', key_name, process.env[key_name]);
