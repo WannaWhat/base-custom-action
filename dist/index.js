@@ -6698,15 +6698,56 @@ var __webpack_exports__ = {};
 // run()
 var YAML = __nccwpck_require__(552);
 var fs = __nccwpck_require__(747);
-function parse_config() {
-    var file = fs.readFileSync('test.yml', 'utf8');
-    var a = YAML.parse(file);
-    console.log(a);
+var CONFIG_PATH = 'test.yml';
+function get_config() {
+    if (fs.existsSync(CONFIG_PATH)) {
+        var file = fs.readFileSync(CONFIG_PATH, 'utf8');
+        var deployment_config = YAML.parse(file);
+        console.log(deployment_config);
+        console.log(deployment_config['dep_branches']['dev']);
+        console.log(deployment_config['dep_branches']['dev']['env']);
+        return deployment_config;
+    }
+    else {
+        throw new Error("Error exit, you must create configuration file: " + CONFIG_PATH);
+    }
 }
 function main() {
-    console.log('Start deployment script');
-    parse_config();
+    try {
+        console.log('Start deployment script');
+        var CONFIG_FILE = get_config();
+        if (BRANCH in CONFIG_FILE['dep_branches']) {
+        }
+        else {
+            throw new Error("Current branch: " + BRANCH + " not in config file: " + CONFIG_PATH);
+        }
+        var BRANCH_FILE = CONFIG_FILE['dep_branches'][BRANCH];
+        // console.log(`BRANCH_FILE ${ BRANCH_FILE['env']['path'] }`)
+        if ('env' in BRANCH_FILE) {
+            var env_path = BRANCH_FILE['env']['path'];
+            console.log('actual', env_path);
+            var file = fs.readFileSync(env_path, 'utf8');
+            file += '\n';
+            var enviroments = BRANCH_FILE['env']['append'];
+            for (var key in enviroments) {
+                if (enviroments[key]['secret']) {
+                    file += key + "=" + process.env[key] + "\n";
+                }
+                else {
+                    file += key + "=" + enviroments[key] + "\n";
+                }
+            }
+            fs.writeFileSync(env_path, file);
+            console.log(file);
+        }
+    }
+    catch (error) {
+        console.error(error.message);
+    }
 }
+// Initial github inputs
+// const BRANCH = core.getInput('branch')
+var BRANCH = 'master';
 main();
 
 })();
