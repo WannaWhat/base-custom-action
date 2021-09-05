@@ -2,6 +2,22 @@ name: 'Fancy name of the action'
 description: 'Short description'
 author: 'name I want to become famous with'
 inputs:
+  branch:
+    description: 'current github repo branch'
+    required: true
+  host:
+    description: 'url for deployment server'
+    required: true
+  port:
+    description: 'port for deployment server'
+    required: true
+  user:
+    description: 'user for deployment server'
+    required: true
+  ssh-key:
+    description: 'ssh access key for deployment server'
+    required: true
+
   github-token:
     description: 'token'
     required: true
