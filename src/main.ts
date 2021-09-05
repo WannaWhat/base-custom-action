@@ -1,20 +1,4 @@
-// import * as core from '@actions/core';
-//
-//
-// async function run() {
-//     try {
-//         const BRANCH = core.getInput('branch')
-//         console.log('Current branch', BRANCH)
-//     }
-//     catch (error) {
-//         core.setFailed(error.message)
-//     }
-// }
-//
-//
-//
-//
-// run()
+import * as core from '@actions/core';
 const YAML = require('yaml')
 const fs = require('fs')
 
@@ -72,7 +56,7 @@ function main(): void {
 }
 
 // Initial github inputs
-// const BRANCH = core.getInput('branch')
-const BRANCH: string = 'master'
+const BRANCH = core.getInput('branch')
+// const BRANCH: string = 'master'
 
 main()
