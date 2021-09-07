@@ -7,6 +7,16 @@ dep_branches:
                 - name: naming
                 - BOT_TOKEN
                 - key: name
+        service:
+            name: base_custom_master
+            enable: 1
+        exclude:
+            - .git
+            - .idea
+            - package-lock.json
+            - package.json
+            - privKety.tk
+            - node_modules
 
     dev:
         env:
