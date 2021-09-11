@@ -7,9 +7,12 @@ dep_branches:
                 - name: naming
                 - BOT_TOKEN
                 - key: name
-        service:
+        transfer:
             name: base_custom_master
-            enable: 1
+            create_service: true
+            exec_param: python3.9 __main__.py
+            start_service: true
+            enable: true
         exclude:
             - .git
             - .idea

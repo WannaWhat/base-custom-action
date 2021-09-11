@@ -1,6 +1,512 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ 7351:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.issue = exports.issueCommand = void 0;
+const os = __importStar(__nccwpck_require__(2087));
+const utils_1 = __nccwpck_require__(5278);
+/**
+ * Commands
+ *
+ * Command Format:
+ *   ::name key=value,key=value::message
+ *
+ * Examples:
+ *   ::warning::This is the message
+ *   ::set-env name=MY_VAR::some value
+ */
+function issueCommand(command, properties, message) {
+    const cmd = new Command(command, properties, message);
+    process.stdout.write(cmd.toString() + os.EOL);
+}
+exports.issueCommand = issueCommand;
+function issue(name, message = '') {
+    issueCommand(name, {}, message);
+}
+exports.issue = issue;
+const CMD_STRING = '::';
+class Command {
+    constructor(command, properties, message) {
+        if (!command) {
+            command = 'missing.command';
+        }
+        this.command = command;
+        this.properties = properties;
+        this.message = message;
+    }
+    toString() {
+        let cmdStr = CMD_STRING + this.command;
+        if (this.properties && Object.keys(this.properties).length > 0) {
+            cmdStr += ' ';
+            let first = true;
+            for (const key in this.properties) {
+                if (this.properties.hasOwnProperty(key)) {
+                    const val = this.properties[key];
+                    if (val) {
+                        if (first) {
+                            first = false;
+                        }
+                        else {
+                            cmdStr += ',';
+                        }
+                        cmdStr += `${key}=${escapeProperty(val)}`;
+                    }
+                }
+            }
+        }
+        cmdStr += `${CMD_STRING}${escapeData(this.message)}`;
+        return cmdStr;
+    }
+}
+function escapeData(s) {
+    return utils_1.toCommandValue(s)
+        .replace(/%/g, '%25')
+        .replace(/\r/g, '%0D')
+        .replace(/\n/g, '%0A');
+}
+function escapeProperty(s) {
+    return utils_1.toCommandValue(s)
+        .replace(/%/g, '%25')
+        .replace(/\r/g, '%0D')
+        .replace(/\n/g, '%0A')
+        .replace(/:/g, '%3A')
+        .replace(/,/g, '%2C');
+}
+//# sourceMappingURL=command.js.map
+
+/***/ }),
+
+/***/ 2186:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getState = exports.saveState = exports.group = exports.endGroup = exports.startGroup = exports.info = exports.notice = exports.warning = exports.error = exports.debug = exports.isDebug = exports.setFailed = exports.setCommandEcho = exports.setOutput = exports.getBooleanInput = exports.getMultilineInput = exports.getInput = exports.addPath = exports.setSecret = exports.exportVariable = exports.ExitCode = void 0;
+const command_1 = __nccwpck_require__(7351);
+const file_command_1 = __nccwpck_require__(717);
+const utils_1 = __nccwpck_require__(5278);
+const os = __importStar(__nccwpck_require__(2087));
+const path = __importStar(__nccwpck_require__(5622));
+/**
+ * The code to exit an action
+ */
+var ExitCode;
+(function (ExitCode) {
+    /**
+     * A code indicating that the action was successful
+     */
+    ExitCode[ExitCode["Success"] = 0] = "Success";
+    /**
+     * A code indicating that the action was a failure
+     */
+    ExitCode[ExitCode["Failure"] = 1] = "Failure";
+})(ExitCode = exports.ExitCode || (exports.ExitCode = {}));
+//-----------------------------------------------------------------------
+// Variables
+//-----------------------------------------------------------------------
+/**
+ * Sets env variable for this action and future actions in the job
+ * @param name the name of the variable to set
+ * @param val the value of the variable. Non-string values will be converted to a string via JSON.stringify
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function exportVariable(name, val) {
+    const convertedVal = utils_1.toCommandValue(val);
+    process.env[name] = convertedVal;
+    const filePath = process.env['GITHUB_ENV'] || '';
+    if (filePath) {
+        const delimiter = '_GitHubActionsFileCommandDelimeter_';
+        const commandValue = `${name}<<${delimiter}${os.EOL}${convertedVal}${os.EOL}${delimiter}`;
+        file_command_1.issueCommand('ENV', commandValue);
+    }
+    else {
+        command_1.issueCommand('set-env', { name }, convertedVal);
+    }
+}
+exports.exportVariable = exportVariable;
+/**
+ * Registers a secret which will get masked from logs
+ * @param secret value of the secret
+ */
+function setSecret(secret) {
+    command_1.issueCommand('add-mask', {}, secret);
+}
+exports.setSecret = setSecret;
+/**
+ * Prepends inputPath to the PATH (for this action and future actions)
+ * @param inputPath
+ */
+function addPath(inputPath) {
+    const filePath = process.env['GITHUB_PATH'] || '';
+    if (filePath) {
+        file_command_1.issueCommand('PATH', inputPath);
+    }
+    else {
+        command_1.issueCommand('add-path', {}, inputPath);
+    }
+    process.env['PATH'] = `${inputPath}${path.delimiter}${process.env['PATH']}`;
+}
+exports.addPath = addPath;
+/**
+ * Gets the value of an input.
+ * Unless trimWhitespace is set to false in InputOptions, the value is also trimmed.
+ * Returns an empty string if the value is not defined.
+ *
+ * @param     name     name of the input to get
+ * @param     options  optional. See InputOptions.
+ * @returns   string
+ */
+function getInput(name, options) {
+    const val = process.env[`INPUT_${name.replace(/ /g, '_').toUpperCase()}`] || '';
+    if (options && options.required && !val) {
+        throw new Error(`Input required and not supplied: ${name}`);
+    }
+    if (options && options.trimWhitespace === false) {
+        return val;
+    }
+    return val.trim();
+}
+exports.getInput = getInput;
+/**
+ * Gets the values of an multiline input.  Each value is also trimmed.
+ *
+ * @param     name     name of the input to get
+ * @param     options  optional. See InputOptions.
+ * @returns   string[]
+ *
+ */
+function getMultilineInput(name, options) {
+    const inputs = getInput(name, options)
+        .split('\n')
+        .filter(x => x !== '');
+    return inputs;
+}
+exports.getMultilineInput = getMultilineInput;
+/**
+ * Gets the input value of the boolean type in the YAML 1.2 "core schema" specification.
+ * Support boolean input list: `true | True | TRUE | false | False | FALSE` .
+ * The return value is also in boolean type.
+ * ref: https://yaml.org/spec/1.2/spec.html#id2804923
+ *
+ * @param     name     name of the input to get
+ * @param     options  optional. See InputOptions.
+ * @returns   boolean
+ */
+function getBooleanInput(name, options) {
+    const trueValue = ['true', 'True', 'TRUE'];
+    const falseValue = ['false', 'False', 'FALSE'];
+    const val = getInput(name, options);
+    if (trueValue.includes(val))
+        return true;
+    if (falseValue.includes(val))
+        return false;
+    throw new TypeError(`Input does not meet YAML 1.2 "Core Schema" specification: ${name}\n` +
+        `Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
+}
+exports.getBooleanInput = getBooleanInput;
+/**
+ * Sets the value of an output.
+ *
+ * @param     name     name of the output to set
+ * @param     value    value to store. Non-string values will be converted to a string via JSON.stringify
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function setOutput(name, value) {
+    process.stdout.write(os.EOL);
+    command_1.issueCommand('set-output', { name }, value);
+}
+exports.setOutput = setOutput;
+/**
+ * Enables or disables the echoing of commands into stdout for the rest of the step.
+ * Echoing is disabled by default if ACTIONS_STEP_DEBUG is not set.
+ *
+ */
+function setCommandEcho(enabled) {
+    command_1.issue('echo', enabled ? 'on' : 'off');
+}
+exports.setCommandEcho = setCommandEcho;
+//-----------------------------------------------------------------------
+// Results
+//-----------------------------------------------------------------------
+/**
+ * Sets the action status to failed.
+ * When the action exits it will be with an exit code of 1
+ * @param message add error issue message
+ */
+function setFailed(message) {
+    process.exitCode = ExitCode.Failure;
+    error(message);
+}
+exports.setFailed = setFailed;
+//-----------------------------------------------------------------------
+// Logging Commands
+//-----------------------------------------------------------------------
+/**
+ * Gets whether Actions Step Debug is on or not
+ */
+function isDebug() {
+    return process.env['RUNNER_DEBUG'] === '1';
+}
+exports.isDebug = isDebug;
+/**
+ * Writes debug message to user log
+ * @param message debug message
+ */
+function debug(message) {
+    command_1.issueCommand('debug', {}, message);
+}
+exports.debug = debug;
+/**
+ * Adds an error issue
+ * @param message error issue message. Errors will be converted to string via toString()
+ * @param properties optional properties to add to the annotation.
+ */
+function error(message, properties = {}) {
+    command_1.issueCommand('error', utils_1.toCommandProperties(properties), message instanceof Error ? message.toString() : message);
+}
+exports.error = error;
+/**
+ * Adds a warning issue
+ * @param message warning issue message. Errors will be converted to string via toString()
+ * @param properties optional properties to add to the annotation.
+ */
+function warning(message, properties = {}) {
+    command_1.issueCommand('warning', utils_1.toCommandProperties(properties), message instanceof Error ? message.toString() : message);
+}
+exports.warning = warning;
+/**
+ * Adds a notice issue
+ * @param message notice issue message. Errors will be converted to string via toString()
+ * @param properties optional properties to add to the annotation.
+ */
+function notice(message, properties = {}) {
+    command_1.issueCommand('notice', utils_1.toCommandProperties(properties), message instanceof Error ? message.toString() : message);
+}
+exports.notice = notice;
+/**
+ * Writes info to log with console.log.
+ * @param message info message
+ */
+function info(message) {
+    process.stdout.write(message + os.EOL);
+}
+exports.info = info;
+/**
+ * Begin an output group.
+ *
+ * Output until the next `groupEnd` will be foldable in this group
+ *
+ * @param name The name of the output group
+ */
+function startGroup(name) {
+    command_1.issue('group', name);
+}
+exports.startGroup = startGroup;
+/**
+ * End an output group.
+ */
+function endGroup() {
+    command_1.issue('endgroup');
+}
+exports.endGroup = endGroup;
+/**
+ * Wrap an asynchronous function call in a group.
+ *
+ * Returns the same type as the function itself.
+ *
+ * @param name The name of the group
+ * @param fn The function to wrap in the group
+ */
+function group(name, fn) {
+    return __awaiter(this, void 0, void 0, function* () {
+        startGroup(name);
+        let result;
+        try {
+            result = yield fn();
+        }
+        finally {
+            endGroup();
+        }
+        return result;
+    });
+}
+exports.group = group;
+//-----------------------------------------------------------------------
+// Wrapper action state
+//-----------------------------------------------------------------------
+/**
+ * Saves state for current action, the state can only be retrieved by this action's post job execution.
+ *
+ * @param     name     name of the state to store
+ * @param     value    value to store. Non-string values will be converted to a string via JSON.stringify
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function saveState(name, value) {
+    command_1.issueCommand('save-state', { name }, value);
+}
+exports.saveState = saveState;
+/**
+ * Gets the value of an state set by this action's main execution.
+ *
+ * @param     name     name of the state to get
+ * @returns   string
+ */
+function getState(name) {
+    return process.env[`STATE_${name}`] || '';
+}
+exports.getState = getState;
+//# sourceMappingURL=core.js.map
+
+/***/ }),
+
+/***/ 717:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+// For internal use, subject to change.
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.issueCommand = void 0;
+// We use any as a valid input type
+/* eslint-disable @typescript-eslint/no-explicit-any */
+const fs = __importStar(__nccwpck_require__(5747));
+const os = __importStar(__nccwpck_require__(2087));
+const utils_1 = __nccwpck_require__(5278);
+function issueCommand(command, message) {
+    const filePath = process.env[`GITHUB_${command}`];
+    if (!filePath) {
+        throw new Error(`Unable to find environment variable for file command ${command}`);
+    }
+    if (!fs.existsSync(filePath)) {
+        throw new Error(`Missing file at path: ${filePath}`);
+    }
+    fs.appendFileSync(filePath, `${utils_1.toCommandValue(message)}${os.EOL}`, {
+        encoding: 'utf8'
+    });
+}
+exports.issueCommand = issueCommand;
+//# sourceMappingURL=file-command.js.map
+
+/***/ }),
+
+/***/ 5278:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+// We use any as a valid input type
+/* eslint-disable @typescript-eslint/no-explicit-any */
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.toCommandProperties = exports.toCommandValue = void 0;
+/**
+ * Sanitizes an input into a string so it can be passed into issueCommand safely
+ * @param input input to sanitize into a string
+ */
+function toCommandValue(input) {
+    if (input === null || input === undefined) {
+        return '';
+    }
+    else if (typeof input === 'string' || input instanceof String) {
+        return input;
+    }
+    return JSON.stringify(input);
+}
+exports.toCommandValue = toCommandValue;
+/**
+ *
+ * @param annotationProperties
+ * @returns The command properties to send with the actual annotation command
+ * See IssueCommandProperties: https://github.com/actions/runner/blob/main/src/Runner.Worker/ActionCommandManager.cs#L646
+ */
+function toCommandProperties(annotationProperties) {
+    if (!Object.keys(annotationProperties).length) {
+        return {};
+    }
+    return {
+        title: annotationProperties.title,
+        line: annotationProperties.startLine,
+        endLine: annotationProperties.endLine,
+        col: annotationProperties.startColumn,
+        endColumn: annotationProperties.endColumn
+    };
+}
+exports.toCommandProperties = toCommandProperties;
+//# sourceMappingURL=utils.js.map
+
+/***/ }),
+
 /***/ 9348:
 /***/ ((module) => {
 
@@ -13950,7 +14456,7 @@ let AESGCMDecipher;
 let ChaChaPolyDecipher;
 let GenericDecipher;
 try {
-  binding = __nccwpck_require__(9623);
+  binding = __nccwpck_require__(9041);
   ({ AESGCMCipher, ChaChaPolyCipher, GenericCipher,
      AESGCMDecipher, ChaChaPolyDecipher, GenericDecipher } = binding);
 } catch {}
@@ -31640,11 +32146,10 @@ module.exports = __nccwpck_require__(5065).YAML
 
 /***/ }),
 
-/***/ 9623:
-/***/ ((module) => {
+/***/ 9041:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-module.exports = eval("require")("./crypto/build/Release/sshcrypto.node");
-
+module.exports = require(__nccwpck_require__.ab + "lib/protocol/crypto/build/Release/sshcrypto.node")
 
 /***/ }),
 
@@ -31741,6 +32246,14 @@ module.exports = require("https");;
 
 "use strict";
 module.exports = require("net");;
+
+/***/ }),
+
+/***/ 2087:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("os");;
 
 /***/ }),
 
@@ -31865,186 +32378,180 @@ var __webpack_exports__ = {};
 (() => {
 "use strict";
 __nccwpck_require__.r(__webpack_exports__);
-/* harmony import */ var util__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(1669);
-/* harmony import */ var util__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(util__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(2186);
+/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var util__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(1669);
+/* harmony import */ var util__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__nccwpck_require__.n(util__WEBPACK_IMPORTED_MODULE_1__);
+
 
 var YAML = __nccwpck_require__(3552);
 var NodeSSH = __nccwpck_require__(5845).NodeSSH;
 var path = __nccwpck_require__(5622);
 var fs = __nccwpck_require__(5747);
-var CONFIG_PATH = 'test.yml';
+var CONFIG_PATH = 'dpts.yaml'; // DePloyment Tasks Script .yaml
+var PRIVATE_KEY_FILE = 'tmp_privatekey.prvk';
+var SERVICES_PATH = '/lib/systemd/system/';
+var SOURCE_BIN_PATH = '/usr/local/bin/gitactions/';
+function get_config_parametr(CONFIG_FILE, config_parametr, default_value) {
+    if (config_parametr in CONFIG_FILE) {
+        return CONFIG_FILE[config_parametr];
+    }
+    else {
+        return default_value;
+    }
+}
 function get_config() {
     if (fs.existsSync(CONFIG_PATH)) {
         var file = fs.readFileSync(CONFIG_PATH, 'utf8');
         var deployment_config = YAML.parse(file);
-        return deployment_config;
+        if (BRANCH in deployment_config['dep_branches']) {
+        }
+        else {
+            throw new Error("Current branch: " + BRANCH + " not in config file: " + CONFIG_PATH);
+        }
+        return deployment_config['dep_branches'][BRANCH];
     }
     else {
         throw new Error("Error exit, you must create configuration file: " + CONFIG_PATH);
     }
 }
+function make_env(BRANCH_CONFIG_FILE) {
+    if ('env' in BRANCH_CONFIG_FILE) {
+        var env_path = BRANCH_CONFIG_FILE['env']['path'];
+        var env_file = '';
+        if (fs.existsSync(env_path)) {
+            env_file = fs.readFileSync(env_path, 'utf8');
+            env_file += '\n';
+        }
+        var append_to_enviroment = BRANCH_CONFIG_FILE['env']['append'];
+        for (var key in append_to_enviroment) {
+            var key_name = '';
+            if ((0,util__WEBPACK_IMPORTED_MODULE_1__.isString)(append_to_enviroment[key])) {
+                key_name = append_to_enviroment[key];
+                env_file += key_name + "=" + process.env[key_name] + "\n";
+            }
+            else {
+                for (var index_key in append_to_enviroment[key]) {
+                    key_name = index_key;
+                }
+                env_file += key_name + "=" + append_to_enviroment[key][key_name] + "\n";
+            }
+        }
+        fs.writeFileSync(env_path, env_file);
+    }
+}
+function create_service_file(BRANCH_CONFIG_FILE, program_file_name, program_name) {
+    var exec_start = get_config_parametr(BRANCH_CONFIG_FILE, 'exec_param', '');
+    var service_file_text = "\n[Unit]\n    Description=Service for start project: " + program_name + ", created by wannawhat\n[Service]\n    ExecStart=" + exec_start + "\n    Type=idle\n    KillMode=process\n    SyslogIdentifier=" + program_name + "_" + BRANCH + "\n    SyslogFacility=daemon\n    Restart=on-failure\n[Install]\n    WantedBy=multiuser.target\n    ";
+    fs.writeFileSync(program_name + "_" + BRANCH + ".service", service_file_text, function (err) {
+        if (err) {
+            throw new Error(err.message);
+        }
+    });
+    return program_name + "_" + BRANCH + ".service";
+}
+function transfer_files(BRANCH_CONFIG_FILE) {
+    if ('transfer' in BRANCH_CONFIG_FILE) {
+        fs.writeFileSync(PRIVATE_KEY_FILE, PRIVATE_KEY, function (err) {
+            if (err) {
+                throw new Error(err.message);
+            }
+        });
+        var program_name = BRANCH_CONFIG_FILE['transfer']['name'];
+        var now = new Date();
+        var program_file_path_1 = "" + SOURCE_BIN_PATH + program_name + "_" + now.getFullYear() + "-" + now.getMonth() + "-" + now.getDate() + "_" + now.getHours() + ":" + now.getMinutes() + "/";
+        var create_service_1 = get_config_parametr(BRANCH_CONFIG_FILE['transfer'], 'create_service', true);
+        var exclude_files_1;
+        exclude_files_1 = get_config_parametr(BRANCH_CONFIG_FILE, 'exclude', []);
+        var transfer_files_list_1 = [];
+        fs.readdirSync(path.resolve(process.cwd())).forEach(function (file) {
+            if (exclude_files_1.indexOf(file) == -1) {
+                transfer_files_list_1.push(file);
+            }
+        });
+        var enable_1 = false;
+        var start_service_1 = false;
+        var service_file_name_1 = '';
+        if (create_service_1) {
+            service_file_name_1 = create_service_file(BRANCH_CONFIG_FILE['transfer'], program_file_path_1, program_name);
+            start_service_1 = get_config_parametr(BRANCH_CONFIG_FILE['transfer'], 'start_service', true);
+            enable_1 = get_config_parametr(BRANCH_CONFIG_FILE['transfer'], 'enable', true);
+        }
+        var ssh_1 = new NodeSSH();
+        ssh_1.connect({
+            host: HOST,
+            port: PORT,
+            username: USERNAME,
+            privateKey: PRIVATE_KEY_FILE,
+        }).then(function () {
+            console.log('Connect');
+            push_to_ssh(ssh_1, transfer_files_list_1, 0, program_file_path_1, function () {
+                console.log('Success transfer files to server');
+                if (create_service_1) {
+                    console.log('Creating service');
+                    ssh_1.putFile(service_file_name_1, "" + SERVICES_PATH + service_file_name_1).then(function () {
+                        console.log('Reload systemctl daemon');
+                        ssh_1.execCommand('systemctl daemon-reload');
+                        if (enable_1) {
+                            console.log('Enable service on server');
+                            ssh_1.execCommand("systemctl enable " + service_file_name_1);
+                        }
+                        if (start_service_1) {
+                            console.log('Start service on server');
+                            ssh_1.execCommand("systemctl start " + service_file_name_1);
+                        }
+                        console.log('All tasks completed');
+                    }, function (error) {
+                        console.log(error);
+                    });
+                }
+            });
+        });
+    }
+}
 function main() {
     try {
-        console.log('Start deployment script');
-        var CONFIG_FILE = get_config();
-        if (BRANCH in CONFIG_FILE['dep_branches']) {
-        }
-        else {
-            throw new Error("Current branch: " + BRANCH + " not in config file: " + CONFIG_PATH);
-        }
-        var BRANCH_FILE = CONFIG_FILE['dep_branches'][BRANCH];
-        if ('env' in BRANCH_FILE) {
-            var env_path = BRANCH_FILE['env']['path'];
-            var file = fs.readFileSync(env_path, 'utf8');
-            file += '\n';
-            var enviroments = BRANCH_FILE['env']['append'];
-            for (var key in enviroments) {
-                var key_name = '';
-                if ((0,util__WEBPACK_IMPORTED_MODULE_0__.isString)(enviroments[key])) {
-                    key_name = enviroments[key];
-                    file += key_name + "=" + process.env[key_name] + "\n";
-                }
-                else {
-                    for (var index_key in enviroments[key]) {
-                        key_name = index_key;
-                    }
-                    file += key_name + "=" + enviroments[key][key_name] + "\n";
-                }
-            }
-            fs.writeFileSync(env_path, file);
-            console.log(file);
-        }
-        if ('service' in BRANCH_FILE) {
-            fs.writeFileSync('tmp_privatekey.prvk', PRIV_KEY, function (err) {
-                if (err) {
-                    throw new Error(err.message);
-                }
-            });
-            var service_name = BRANCH_FILE['service']['name'];
-            var enable = false;
-            if ('enable' in BRANCH_FILE['service']) {
-                enable = true;
-            }
-            var exclude_files_1;
-            exclude_files_1 = [];
-            if ('exclude' in BRANCH_FILE) {
-                exclude_files_1 = BRANCH_FILE['exclude'];
-            }
-            var files_list_1 = [];
-            console.log(exclude_files_1);
-            fs.readdirSync(path.resolve(process.cwd())).forEach(function (file) {
-                console.log([file], (exclude_files_1.indexOf(file) == -1), 'lalal', file.type);
-                if (exclude_files_1.indexOf(file) != -1) {
-                }
-                else {
-                    files_list_1.push(file);
-                }
-            });
-            console.log('dsdas', files_list_1, 'hehe');
-            var now = new Date();
-            var server_file_path_1 = "/usr/local/bin/gitactions/" + service_name + "_" + now.getFullYear() + "-" + now.getMonth() + "-" + now.getDate() + "_" + now.getHours() + ":" + now.getMinutes() + "/";
-            console.log(server_file_path_1, 'new_path');
-            var ssh_1 = new NodeSSH();
-            ssh_1.connect({
-                host: HOST,
-                port: PORT,
-                username: USERNAME,
-                privateKey: 'tmp_privatekey.prvk'
-            }).then(function () {
-                console.log('Connect');
-                push_to_ssh(ssh_1, files_list_1, 0, server_file_path_1, function () {
-                    console.log('Success');
-                });
-            });
-        }
+        console.log('Start auto deployment script');
+        var BRANCH_CONFIG_FILE = get_config();
+        make_env(BRANCH_CONFIG_FILE);
+        transfer_files(BRANCH_CONFIG_FILE);
     }
     catch (error) {
-        console.error(error.message);
+        _actions_core__WEBPACK_IMPORTED_MODULE_0__.error(error.message);
     }
 }
 function push_to_ssh(ssh_obj, items_list, counter, server_file_path, callback) {
     if (fs.lstatSync(items_list[counter]).isDirectory()) {
-        console.log("Push directory: " + items_list[counter]);
+        console.log("+ Push to server directory: " + items_list[counter]);
         ssh_obj.putDirectory(path.resolve(process.cwd()) + '/' + items_list[counter], server_file_path + items_list[counter]).then(function () {
-            counter += 1;
+            counter++;
             if (counter >= items_list.length) {
-                callback();
+                return callback();
             }
             return push_to_ssh(ssh_obj, items_list, counter, server_file_path, callback);
         }, function (error) {
-            console.log("Something's wrong");
-            console.log(error);
+            throw new Error(error.message);
         });
     }
     else {
-        console.log("Push file: " + items_list[counter]);
+        console.log("+ Push to server file: " + items_list[counter]);
         ssh_obj.putFile(path.resolve(process.cwd()) + '/' + items_list[counter], server_file_path + items_list[counter]).then(function () {
-            counter += 1;
+            counter++;
             if (counter >= items_list.length) {
-                callback();
+                return callback();
             }
             return push_to_ssh(ssh_obj, items_list, counter, server_file_path, callback);
         }, function (error) {
-            console.log("Something's wrong");
-            console.log(error);
+            throw new Error(error.message);
         });
     }
 }
 // Initial github inputs
-// const BRANCH = core.getInput('branch')
-var BRANCH = 'master';
-var HOST = '172.104.237.217';
-var PORT = 22;
-var USERNAME = 'gitactions';
-var PRIV_KEY = '-----BEGIN OPENSSH PRIVATE KEY-----\n' +
-    'b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAACFwAAAAdzc2gtcn\n' +
-    'NhAAAAAwEAAQAAAgEAvK1v2KH0tFwB4PXnhwy9z6pMJHBGBwu1vbYx/RCSsmN4NbAIa41S\n' +
-    '76APoTnIhCfQBrEj7aek/Vjc3tvZsuEggweVRuociWH8tLTrwGsrdy5FOrCUrS3nFUWYyK\n' +
-    '5XZ1z/baKykzA+Ruqjx5I2oFHHaO1ntmQfJuVkiEx/tTvi6AYEgYxGj8G9Zww7f3I9cz6E\n' +
-    'z7fwa+YO5SlMXM9kD00hedQfy00H76XU5WTpBCL6VCte6fK6ZvQNTvI9My+4xWBNBMedBo\n' +
-    'sh/47xemvuu1AkIzF/CxGiRiY+OSzOS8Kq46mB1ksO9cJJl5w26b9gStkKZQBXPS1vzbAh\n' +
-    'e3wJnPa8WCpTqun/FJMfhgdSrY3ne9cJ3TF0R6wxFqKJ0pBRxBEeEP0g7yOMjmRe5ni+jN\n' +
-    'RQXkNuuZuaxbdqPb2ZTVI+YgFzDzaAO4JRhTaUdMCoJANTA52BYCX6h3hKGQ4mXxcxHaaS\n' +
-    'BNCvxBrbWNmceUZExHXUZcfMKz3+UqICQ3XJHf2jRqKhDclJNioa4cAkjz55YQ7dW4HF7W\n' +
-    'XimPfS3ND57gSllHdEo6ngwuwZXSNHA+39xYc1VwT7ZTRJa8DGXoYtPaeeD5NFreyJxjFO\n' +
-    'LlbHmjQto2Uk+qgf1GoBnOOTav97ac6pqct5is7jJZJZp24ilncvjluGuxiOvTCi3MMTVY\n' +
-    'EAAAdQPvpy7T76cu0AAAAHc3NoLXJzYQAAAgEAvK1v2KH0tFwB4PXnhwy9z6pMJHBGBwu1\n' +
-    'vbYx/RCSsmN4NbAIa41S76APoTnIhCfQBrEj7aek/Vjc3tvZsuEggweVRuociWH8tLTrwG\n' +
-    'srdy5FOrCUrS3nFUWYyK5XZ1z/baKykzA+Ruqjx5I2oFHHaO1ntmQfJuVkiEx/tTvi6AYE\n' +
-    'gYxGj8G9Zww7f3I9cz6Ez7fwa+YO5SlMXM9kD00hedQfy00H76XU5WTpBCL6VCte6fK6Zv\n' +
-    'QNTvI9My+4xWBNBMedBosh/47xemvuu1AkIzF/CxGiRiY+OSzOS8Kq46mB1ksO9cJJl5w2\n' +
-    '6b9gStkKZQBXPS1vzbAhe3wJnPa8WCpTqun/FJMfhgdSrY3ne9cJ3TF0R6wxFqKJ0pBRxB\n' +
-    'EeEP0g7yOMjmRe5ni+jNRQXkNuuZuaxbdqPb2ZTVI+YgFzDzaAO4JRhTaUdMCoJANTA52B\n' +
-    'YCX6h3hKGQ4mXxcxHaaSBNCvxBrbWNmceUZExHXUZcfMKz3+UqICQ3XJHf2jRqKhDclJNi\n' +
-    'oa4cAkjz55YQ7dW4HF7WXimPfS3ND57gSllHdEo6ngwuwZXSNHA+39xYc1VwT7ZTRJa8DG\n' +
-    'XoYtPaeeD5NFreyJxjFOLlbHmjQto2Uk+qgf1GoBnOOTav97ac6pqct5is7jJZJZp24iln\n' +
-    'cvjluGuxiOvTCi3MMTVYEAAAADAQABAAACAQCdzEP9nz4EVerwVVkk9sAM3TW/R/MZU27V\n' +
-    'UnquVt0Juu0/oZD5OoIBjRFlWulbtdxirGYLDimMBXT8Ik0JMQW68G2lmIjzUXNDQwjkrf\n' +
-    'z1OUqHEkXWLMzWWpW0STMqbHnoHKlTNobvUrBVafCr1pl7JQqXXVc8dZ/F6ozoa0STnuzH\n' +
-    '2CTveC5K780XAtln+AKlowW9h/QvLoICISVjMrPrq0BIDI21nTDYBbRoVESefoNsEChbkI\n' +
-    'NM4oXSuHfFA4yGkde/MD/n94n4RCqumBERKgVBoabhGnzx3opOjGnV69999Np3Kd3Yobq/\n' +
-    'deI31xu9azKLJOQb19G47/0uPKE5f88qSuRHQZ2lDdrZBa/4+hm6Fc8w9gWJdO2xY/DrJP\n' +
-    'PmtJ3WRKWxCWpsBiXh/ArCKtd1ChwHuSJQWpaME/SZmiOIKMFjavjUNKetRS5zZUi0DMFg\n' +
-    'wLF+2d+Lfti7CcpLeYaWERaibxoU6riyyxClLGI31huaFrqXUdGcy50Z9i5SelLNlKYBkl\n' +
-    '0FW028G7QUYbIhyeD5YRG0mFguofctQfVW1pQ/L/8OpJ9GiYv3TLwHB2q8Kw0q2+z4kN8f\n' +
-    'plJlB3tlnTwq4bKDUnqB6Luyb7yDPON5xd4TTpt1/aqwkaPVlVJ9Fmd/R8v4jrutM4wQ1T\n' +
-    'Le2y28mHGgT8XMvULo3QAAAQEAoUxieR9+zJ9ZvXyiViux6cY85uqkMH0e2YBE+2YwoHGz\n' +
-    'NMsP9FL0zA9AUWc1z1R3vI4pSwWWqVWiHNtz4grFk3MhVW3G0Q2ASVv2sT/n/tTbSs7Ly9\n' +
-    'FsJ91FMIkzP1QbmDZeyGtgOI2SCXLKuM/Rkt6RPIaynhpN8Iy7q6gvYPuc9h2c96SOobvD\n' +
-    'D6C7QP3AjgmhiT/qbBS02lomdlOLDSHTPPtmQMlT8clC+nUrzozZk0tUsTpvuE2nj388hY\n' +
-    'rAnN8AVB46a8/G9twiIBsF0ZhYxW8ih/uDui/zdVdIFa44loAedAnhTBlv9Xq5BFfFF5hx\n' +
-    'XIO3iyHsi8gELihM8wAAAQEA3ogLOMnZAXl+rx2AO121nUWIKyQO4qLXFVZrPbthFmmpsR\n' +
-    'ivNX/r5BFJ0KDywrg4u2oyNmAP2js1t30s16PSE2vEIkoVdmT1LGTQY/F6iSBCmTnVT0Ix\n' +
-    'F8W3brCB0cI0bPmV1scgWDfLpepQ9imwNd0W+cmyxqU3MEEqhY3+sQx97Utu3RfJ1O0eeR\n' +
-    '9i+FaIM4EAxb+cKJRmaKGbhhtCOMG5EkL6xjb5GCZlN7goDaphf3iuOekIZpjldHiqmGAf\n' +
-    'x5hYfaTcWBVWYt2DOeYHeelf4h58Jmo+NTBSJ3qClyBKzsRb9yVz7fgxEYLa1J9iT+TJEA\n' +
-    'O9hmChfGCbNjEGawAAAQEA2Q3w7EY4DW8NerlQPL7F6/X6zN5RANzOMHq8cieRKHi+L7PZ\n' +
-    'El9tXjSnpz4fYJDiAqjxmPJOwCC1gkhkQ/3zK/zsVHUp2fdbBrnKDMN5tl+tylfpECE+62\n' +
-    'jQUtHOOFqhTHR8X3x68ysquS29MHJJj1YYtomxVqfIfO06HNJUgVn0rdFytDj6qtp3/Zaz\n' +
-    'vOT8Ev/JH7qeqxxavrK0k3mgWlTCoHQTjiOJ2gMMbffSZ9w3iTr1d3w1PQmO0DPc2I3zLo\n' +
-    'dDVbgYq/IydUsSrqEAWpIxVi8vnAA1QW3ihhofAC0qgwqA3sO302/xp9UwK8jz3u/Ev48n\n' +
-    'Xzty1j8H7JrWwwAAABRnaXRhY3Rpb25zQGxvY2FsaG9zdAECAwQF\n' +
-    '-----END OPENSSH PRIVATE KEY-----';
+var BRANCH = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('branch');
+var HOST = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('host');
+var PORT = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('port');
+var USERNAME = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('username');
+var PRIVATE_KEY = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('private_key');
 main();
 
 })();
