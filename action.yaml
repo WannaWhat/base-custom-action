@@ -14,15 +14,8 @@ inputs:
   user:
     description: 'user for deployment server'
     required: true
-  ssh-key:
+  ssh-private-key:
     description: 'ssh access key for deployment server'
-    required: true
-
-  github-token:
-    description: 'token'
-    required: true
-  github-lalala:
-    description: 'lalala'
     required: true
 runs:
   using: 'node12' # необходимая версия ноды – важно
