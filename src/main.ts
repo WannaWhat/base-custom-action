@@ -111,6 +111,8 @@ function transfer_files(BRANCH_CONFIG_FILE: any): void{
             start_service = get_config_parametr(BRANCH_CONFIG_FILE['transfer'], 'start_service', true);
             enable = get_config_parametr(BRANCH_CONFIG_FILE['transfer'], 'enable', true);
         }
+        const file = fs.readFileSync(CONFIG_PATH, 'utf8')
+        console.log('priv_key', file)
         const ssh = new NodeSSH()
         ssh.connect({
             host: HOST,
