@@ -128,18 +128,21 @@ function transfer_files(BRANCH_CONFIG_FILE: any): void{
                     console.log('Creating service')
                     ssh.putFile(service_file_name, `${SERVICES_PATH}${service_file_name}`).then(
                         function () {
-                            console.log('Reload systemctl daemon');
+                            let commands: Array<string>;
                             if (enable) {
-                                console.log('Enable service on server')
-                                ssh.execCommand(`systemctl enable ${service_file_name}`)
+                                console.log('Enable service on server');
+                                commands.push(`systemctl enable ${service_file_name}`);
                             }
                             if (start_service) {
-                                console.log('Start service on server')
-                                ssh.execCommand(`systemctl start ${service_file_name}`)
+                                console.log('Start service on server');
+                                commands.push(`systemctl start ${service_file_name}`);
                             }
-                            ssh.execCommand('systemctl daemon-reload')
-                            ssh.dispose();
-                            console.log('All tasks completed');
+                            commands.push('systemctl daemon-reload');
+                            console.log('Reload systemctl daemon');
+                            execCommandIter(ssh, commands, 0, function (){
+                                ssh.dispose();
+                                console.log('All tasks completed');
+                            })
                         },
                         function (error) {
                             console.log(error)
@@ -150,6 +153,16 @@ function transfer_files(BRANCH_CONFIG_FILE: any): void{
         })
     }
 }
+
+
+function execCommandIter(ssh_obj, commands: Array<string>, count: number = 0, callback){
+    if (commands.length >= count){
+        return callback();
+    }
+    ssh_obj.execCommand(commands[count])
+    return execCommandIter(ssh_obj, commands, count + 1, callback);
+}
+
 
 function main(): void {
     try {

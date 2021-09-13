@@ -32492,18 +32492,21 @@ function transfer_files(BRANCH_CONFIG_FILE) {
                 if (create_service_1) {
                     console.log('Creating service');
                     ssh_1.putFile(service_file_name_1, "" + SERVICES_PATH + service_file_name_1).then(function () {
-                        console.log('Reload systemctl daemon');
+                        var commands;
                         if (enable_1) {
                             console.log('Enable service on server');
-                            ssh_1.execCommand("systemctl enable " + service_file_name_1);
+                            commands.push("systemctl enable " + service_file_name_1);
                         }
                         if (start_service_1) {
                             console.log('Start service on server');
-                            ssh_1.execCommand("systemctl start " + service_file_name_1);
+                            commands.push("systemctl start " + service_file_name_1);
                         }
-                        ssh_1.execCommand('systemctl daemon-reload');
-                        ssh_1.dispose();
-                        console.log('All tasks completed');
+                        commands.push('systemctl daemon-reload');
+                        console.log('Reload systemctl daemon');
+                        execCommandIter(ssh_1, commands, 0, function () {
+                            ssh_1.dispose();
+                            console.log('All tasks completed');
+                        });
                     }, function (error) {
                         console.log(error);
                     });
@@ -32511,6 +32514,14 @@ function transfer_files(BRANCH_CONFIG_FILE) {
             });
         });
     }
+}
+function execCommandIter(ssh_obj, commands, count, callback) {
+    if (count === void 0) { count = 0; }
+    if (commands.length >= count) {
+        return callback();
+    }
+    ssh_obj.execCommand(commands[count]);
+    return execCommandIter(ssh_obj, commands, count + 1, callback);
 }
 function main() {
     try {
