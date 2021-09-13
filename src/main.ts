@@ -197,51 +197,9 @@ function push_to_ssh(ssh_obj, items_list: Array<string>, counter: number, server
 }
 
 // Initial github inputs
-// const BRANCH: string = core.getInput('branch')
-// const HOST: string = core.getInput('host')
-// const PORT: string = core.getInput('port')
-// const USERNAME: string = core.getInput('username')
-// const PRIVATE_KEY: string = core.getInput('ssh-private-key')
-const BRANCH = 'master';
-const HOST = '172.104.237.217';
-const PORT = 22;
-const USERNAME = 'gitactions';
-const PRIVATE_KEY: string = '-----BEGIN OPENSSH PRIVATE KEY-----\n' +
-    'b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAABlwAAAAdzc2gtcn\n' +
-    'NhAAAAAwEAAQAAAYEAr0YjvQeQ+YCO3F5HaJdYkuTT+V1kE22LCMUlQwBlVIIUiTYhThaq\n' +
-    '9ua0KwFYcGdYivVu6NZqBBaTVU+5IdwHIrgW+UPC43TXQjhDsqPGmK/o0tulV/7llNb199\n' +
-    'VyclvKcECwpXkHzb71N3ZtwMLLiv147GTr2XOvA/Am4WGPWe6ocf0C4y0J9mHR6iVZmgdE\n' +
-    'MN5tNaUwvLzHi8yXahQJftMoj7lxp8qrHUzKYV/z8z5FZ9ylJbNAA5OlbLaCT1v35KrA30\n' +
-    'Nh1X4ZqLLZM+43KLZL5O3NnUks3+Wn99kj14pyjsiuEhxQ1QfpRfyrR92K+RRaSXEjmd9x\n' +
-    'XXQRZIPrbHtNSmGaHU2HxYVwKjHd2P6WobcVXjjmec17kMmgdbP8DlLywTSv5ZhEiJVPxV\n' +
-    'MejUVERh8fG6gebtLT/dfWD0VuXrIpPgtgUufR/uy4LsLho4nepsA0wk22YfFVsBeEoVin\n' +
-    'fkZDrc2R+TF/CBnnnqwqoYF5UmxztKRRG9GMJ3KDAAAFkK/KFg+vyhYPAAAAB3NzaC1yc2\n' +
-    'EAAAGBAK9GI70HkPmAjtxeR2iXWJLk0/ldZBNtiwjFJUMAZVSCFIk2IU4WqvbmtCsBWHBn\n' +
-    'WIr1bujWagQWk1VPuSHcByK4FvlDwuN010I4Q7Kjxpiv6NLbpVf+5ZTW9ffVcnJbynBAsK\n' +
-    'V5B82+9Td2bcDCy4r9eOxk69lzrwPwJuFhj1nuqHH9AuMtCfZh0eolWZoHRDDebTWlMLy8\n' +
-    'x4vMl2oUCX7TKI+5cafKqx1MymFf8/M+RWfcpSWzQAOTpWy2gk9b9+SqwN9DYdV+Gaiy2T\n' +
-    'PuNyi2S+TtzZ1JLN/lp/fZI9eKco7IrhIcUNUH6UX8q0fdivkUWklxI5nfcV10EWSD62x7\n' +
-    'TUphmh1Nh8WFcCox3dj+lqG3FV445nnNe5DJoHWz/A5S8sE0r+WYRIiVT8VTHo1FREYfHx\n' +
-    'uoHm7S0/3X1g9Fbl6yKT4LYFLn0f7suC7C4aOJ3qbANMJNtmHxVbAXhKFYp35GQ63Nkfkx\n' +
-    'fwgZ556sKqGBeVJsc7SkURvRjCdygwAAAAMBAAEAAAGAYaFHHO8PAPtsGDHnwsmyy7fsnx\n' +
-    'U3Pl8hN9Rgqg6ZYtZGTBu7t3yG5JqjNuU79viJ6HVHvyhXy0kr7jRHIiYmT1+NZHErKHmX\n' +
-    'wcoHY4U4hSpPHMy+L+LKzPpj7hWV9z9L5vURsEpXX3KDss4j2mBm8le4OK0Kdoiqrx3g+l\n' +
-    '/WcriuWTgemJ4o03WvcKY3X8W2ZSYwXNZT7H2XBTcEDFF27I8AI/ae6WDJqbtxa4YAI7jG\n' +
-    '/lB4KSTMfnGKjqCmuz+1TEXuSop0tT/XKNXH11B6Q9xXvkw6ATXOFduvq8Eluj36vQP3ES\n' +
-    'QAZGnAsNZYDrDLiyXTgvHeBMB7Mj4NZd4eOsSLZHUm0VqtjkWb5O9V8foKDF1GAFYSXdPF\n' +
-    'AiMqVauJM7PKUlHp5KRjxa0WtPV1viNoolSsSqpojRIS4+JmSO+K9w2XJYtROdeGIy0JYO\n' +
-    'VM5NYvnmI4Fejb7Keal5YEo+bPWNBjuCmfCD+rZddmLg9mHp2j/Ejxba+es66Bv1RpAAAA\n' +
-    'wAyIwS1aImDGPqW2jLULTQ9NWASNw3O6T+NWpIrGxuymbbAXxuJUpNV5JgsNEurEByu+HN\n' +
-    'pBBSq580yN4qBto4YdpMPA0xNYcrihB3fiO/tqFruCj35U3QOmLoO5vaB63YKp9+dZHNuk\n' +
-    'RgoOBVtMp1N2YWu2SyWh8BUXzwrNxfOaWD6y358Lp0A/9sGZlZAs4USaRSRjAOYKmV2YHf\n' +
-    'BxHvCiGvjVhIFt5V1AF4tjZN/0DjgoQsunm4aNcYJmvihU5gAAAMEA1y1z43nPLFZWn6Gk\n' +
-    'S3fjm+Foz5Dg5VYfKEXQuGkr4J2MR4LIQzcrEU8I8R2rak2pc8eRgurIyUZr1DKQWM/Jt9\n' +
-    'SMgcbC40HhGAYAmemFVArpMxqyoq1HRJ54sGYgklW8rMgUxCioelelZ+WtzLdLvJHnPHd1\n' +
-    '8RcTiTzWnJehwqHnf5wXX8/x/eb4LsFyaqqBh8idscJeU6SV8LP4ekPikF/6b52y2mX6re\n' +
-    'qCW/jJgF6gisMLvypb05p6c7t7KoWNAAAAwQDQhq/TJLHVnobXIULXeaHfflTjgKxqav2I\n' +
-    'xFE+zO0T+zEOJjwOno+Bt57LGT2yUMWMG1Gd3MB+xQUYpo2bKNumMyA75b+1oKTz9CBoMj\n' +
-    'ivs52tuvOeVjqf8AYjWiJeEF1xZfdIWuntLrVJl6OyKFUy6biDgZAxCM/E4ZD6LrwAIYoX\n' +
-    '1h6Gb7oBYNAzZ7KItq60yxbj/mqYs9C3yokqLmeEe2fdfnbquDjau2FAo7kE/zLoCKAm0E\n' +
-    '59Zq82/1BkLE8AAAAUZ2l0YWN0aW9uc0Bsb2NhbGhvc3QBAgMEBQYH\n' +
-    '-----END OPENSSH PRIVATE KEY-----'
+const BRANCH: string = core.getInput('branch')
+const HOST: string = core.getInput('host')
+const PORT: string = core.getInput('port')
+const USERNAME: string = core.getInput('username')
+const PRIVATE_KEY: string = core.getInput('ssh-private-key')
 main();

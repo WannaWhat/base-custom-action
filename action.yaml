@@ -11,7 +11,7 @@ inputs:
   port:
     description: 'port for deployment server'
     required: true
-  user:
+  username:
     description: 'user for deployment server'
     required: true
   ssh-private-key:
