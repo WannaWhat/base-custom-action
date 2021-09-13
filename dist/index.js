@@ -32502,6 +32502,7 @@ function transfer_files(BRANCH_CONFIG_FILE) {
                             console.log('Start service on server');
                             ssh_1.execCommand("systemctl start " + service_file_name_1);
                         }
+                        ssh_1.dispose();
                         console.log('All tasks completed');
                         throw new Error('Exit all tasks completed');
                     }, function (error) {
@@ -32518,6 +32519,7 @@ function main() {
         var BRANCH_CONFIG_FILE = get_config();
         make_env(BRANCH_CONFIG_FILE);
         transfer_files(BRANCH_CONFIG_FILE);
+        console.log('Exiting');
         return;
     }
     catch (error) {
