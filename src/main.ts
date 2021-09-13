@@ -128,8 +128,7 @@ function transfer_files(BRANCH_CONFIG_FILE: any): void{
                     console.log('Creating service')
                     ssh.putFile(service_file_name, `${SERVICES_PATH}${service_file_name}`).then(
                         function () {
-                            console.log('Reload systemctl daemon')
-                            ssh.execCommand('systemctl daemon-reload')
+                            console.log('Reload systemctl daemon');
                             if (enable) {
                                 console.log('Enable service on server')
                                 ssh.execCommand(`systemctl enable ${service_file_name}`)
@@ -138,6 +137,7 @@ function transfer_files(BRANCH_CONFIG_FILE: any): void{
                                 console.log('Start service on server')
                                 ssh.execCommand(`systemctl start ${service_file_name}`)
                             }
+                            ssh.execCommand('systemctl daemon-reload')
                             ssh.dispose();
                             console.log('All tasks completed');
                         },
@@ -157,7 +157,6 @@ function main(): void {
     const BRANCH_CONFIG_FILE: any = get_config()
     make_env(BRANCH_CONFIG_FILE)
     transfer_files(BRANCH_CONFIG_FILE);
-    console.log('Exiting')
     return
     }
     catch (error) {
