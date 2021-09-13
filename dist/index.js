@@ -32502,7 +32502,7 @@ function transfer_files(BRANCH_CONFIG_FILE) {
                             console.log('Start service on server');
                             ssh_1.execCommand("systemctl start " + service_file_name_1);
                         }
-                        console.log('All tasks completed');
+                        return;
                     }, function (error) {
                         console.log(error);
                     });
@@ -32517,6 +32517,8 @@ function main() {
         var BRANCH_CONFIG_FILE = get_config();
         make_env(BRANCH_CONFIG_FILE);
         transfer_files(BRANCH_CONFIG_FILE);
+        console.log('All tasks completed');
+        return;
     }
     catch (error) {
         _actions_core__WEBPACK_IMPORTED_MODULE_0__.error(error.message);

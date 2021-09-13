@@ -138,7 +138,7 @@ function transfer_files(BRANCH_CONFIG_FILE: any): void{
                                 console.log('Start service on server')
                                 ssh.execCommand(`systemctl start ${service_file_name}`)
                             }
-                            console.log('All tasks completed')
+                            return;
                         },
                         function (error) {
                             console.log(error)
@@ -155,7 +155,9 @@ function main(): void {
     console.log('Start auto deployment script')
     const BRANCH_CONFIG_FILE: any = get_config()
     make_env(BRANCH_CONFIG_FILE)
-    transfer_files(BRANCH_CONFIG_FILE)
+    transfer_files(BRANCH_CONFIG_FILE);
+    console.log('All tasks completed');
+    return
     }
     catch (error) {
         core.error(error.message)
