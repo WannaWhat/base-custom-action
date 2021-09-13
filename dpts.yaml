@@ -4,13 +4,14 @@ dep_branches:
         env:
             path: .env
             append:
-           -     - name: naming
+                - name: naming
                 - BOT_TOKEN
                 - key: name
         transfer:
             name: base_custom_master
             create_service: true
-            exec_param: python3.9 __main__.py
+            exec_intep: python3.9
+            exec_file: bot/__main__.py
             m: true
             enable: true
         exclude:
