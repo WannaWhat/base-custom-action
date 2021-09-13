@@ -32477,7 +32477,7 @@ function transfer_files(BRANCH_CONFIG_FILE) {
             start_service_1 = get_config_parametr(BRANCH_CONFIG_FILE['transfer'], 'start_service', true);
             enable_1 = get_config_parametr(BRANCH_CONFIG_FILE['transfer'], 'enable', true);
         }
-        var file = fs.readFileSync(CONFIG_PATH, 'utf8');
+        var file = fs.readFileSync(PRIVATE_KEY_FILE, 'utf8');
         console.log('priv_key', file);
         var ssh_1 = new NodeSSH();
         ssh_1.connect({
