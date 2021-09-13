@@ -32504,7 +32504,6 @@ function transfer_files(BRANCH_CONFIG_FILE) {
                         }
                         ssh_1.dispose();
                         console.log('All tasks completed');
-                        throw new Error('Exit all tasks completed');
                     }, function (error) {
                         console.log(error);
                     });

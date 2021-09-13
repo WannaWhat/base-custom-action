@@ -140,7 +140,6 @@ function transfer_files(BRANCH_CONFIG_FILE: any): void{
                             }
                             ssh.dispose();
                             console.log('All tasks completed');
-                            throw new Error('Exit all tasks completed')
                         },
                         function (error) {
                             console.log(error)
