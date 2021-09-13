@@ -129,6 +129,7 @@ function transfer_files(BRANCH_CONFIG_FILE: any): void{
                     ssh.putFile(service_file_name, `${SERVICES_PATH}${service_file_name}`).then(
                         function () {
                             let commands: Array<string>;
+                            commands = [];
                             if (enable) {
                                 console.log('Enable service on server');
                                 commands.push(`systemctl enable ${service_file_name}`);
