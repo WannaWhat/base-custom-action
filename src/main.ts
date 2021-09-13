@@ -196,6 +196,7 @@ const BRANCH: string = core.getInput('branch')
 const HOST: string = core.getInput('host')
 const PORT: string = core.getInput('port')
 const USERNAME: string = core.getInput('username')
-const PRIVATE_KEY: string = core.getInput('private_key')
+const PRIVATE_KEY: string = core.getInput('ssh-private_key')
+
 
 main();

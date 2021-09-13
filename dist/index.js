@@ -32551,7 +32551,7 @@ var BRANCH = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('branch');
 var HOST = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('host');
 var PORT = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('port');
 var USERNAME = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('username');
-var PRIVATE_KEY = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('private_key');
+var PRIVATE_KEY = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('ssh-private_key');
 main();
 
 })();
